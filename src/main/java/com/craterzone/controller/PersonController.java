@@ -1,5 +1,6 @@
 package com.craterzone.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,9 +28,8 @@ public class PersonController {
 	private PersonService personService;
 
 	@PostMapping("/create")
-	public ResponseEntity<Optional<Person>> create(@RequestParam String firstName, @RequestParam String lastName,
-			@RequestParam int age) {
-		Optional<Person> person = Optional.ofNullable(personService.create(firstName, lastName, age));
+	public ResponseEntity<Optional<Person>> create(@RequestBody Person per) {
+		Optional<Person> person = Optional.ofNullable(personService.create(per));
 
 		if (Objects.nonNull(person))
 			return ResponseEntity.status(HttpStatus.CREATED).body(person);
@@ -47,14 +48,15 @@ public class PersonController {
 	}
 
 	@GetMapping("/getAll")
-	public ResponseEntity<List<Person>> getAll() {
-		List<Person> list = personService.getAll();
-		if (list.isEmpty())
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		else
-			return ResponseEntity.of(Optional.of(list));
+	public ResponseEntity<?> getAll() {
+		HashMap<String, Object> person = personService.getAll();
+		if (person != null) {
+			return new ResponseEntity<>(person, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
 	}
-
+	
 	@PutMapping
 	public ResponseEntity<Person> update(@RequestParam String firstName, @RequestParam String lastName,
 			@RequestParam int age) {

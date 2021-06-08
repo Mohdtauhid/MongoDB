@@ -12,7 +12,7 @@ import com.craterzone.model.Person;
 public interface PersonRepository extends MongoRepository<Person, String> {
 	public Person findByFirstName(String firstName);
 
-	@Query(value = "{age :?0}", fields = "{lastName:0}")
+	@Query(value = "{age :?0}", fields = "{lastName:1,firstName:1}")
 	public List<Person> XYZ(int age);
 
 	// public List<Person> findByAge(int age) ;

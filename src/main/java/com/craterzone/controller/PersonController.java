@@ -28,11 +28,11 @@ public class PersonController {
 	private PersonService personService;
 
 	@PostMapping("/create")
-	public ResponseEntity<Optional<Person>> create(@RequestBody Person per) {
-		Optional<Person> person = Optional.ofNullable(personService.create(per));
+	public ResponseEntity<?> create(@RequestBody HashMap<String, Object> per) {
+		Optional<HashMap<String, Object>> person = Optional.ofNullable(personService.create(per));
 
 		if (Objects.nonNull(person))
-			return ResponseEntity.status(HttpStatus.CREATED).body(person);
+			return ResponseEntity.status(HttpStatus.CREATED).body(person.get());
 		else
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 	}
@@ -47,9 +47,10 @@ public class PersonController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@GetMapping("/getAll")
 	public ResponseEntity<?> getAll() {
-		HashMap<String, Object> person = personService.getAll();
+		List<HashMap> person = personService.getAll();
 		if (person != null) {
 			return new ResponseEntity<>(person, HttpStatus.OK);
 		} else {
